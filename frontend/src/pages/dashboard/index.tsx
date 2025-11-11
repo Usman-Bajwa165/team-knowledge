@@ -1,6 +1,5 @@
 // frontend/src/pages/dashboard/index.tsx
 import React, { useEffect, useState } from 'react';
-import NavBar from '../../components/NavBar';
 import ArticleCard from '../../components/ArticleCard';
 import { apiFetch } from '../../lib/api';
 import { useAuth } from '../../lib/auth';
@@ -31,7 +30,6 @@ export default function Dashboard() {
 
   return (
     <>
-      <NavBar />
       <main className="container py-5">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2 style={{ color: '#8B2D2D' }}>Articles</h2>

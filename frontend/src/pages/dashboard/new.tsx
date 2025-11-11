@@ -1,6 +1,5 @@
 // frontend/src/pages/dashboard/new.tsx
 import React, { useState } from 'react';
-import NavBar from '../../components/NavBar';
 import { useAuth } from '../../lib/auth';
 import { apiFetch } from '../../lib/api';
 import Router from 'next/router';
@@ -33,7 +32,6 @@ export default function NewArticle() {
 
   return (
     <>
-      <NavBar />
       <main className="container py-5">
         <div className="row justify-content-center">
           <div className="col-md-9">

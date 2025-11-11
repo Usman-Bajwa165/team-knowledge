@@ -1,6 +1,5 @@
 // frontend/src/pages/reset-password.tsx
 import React, { useEffect, useState } from "react";
-import NavBar from "../components/NavBar";
 import { apiFetch } from "../lib/api";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -53,7 +52,6 @@ export default function ResetPasswordPage() {
 
   return (
     <>
-      <NavBar />
       <main className="container py-5">
         <div className="row justify-content-center">
           <div className="col-md-6">

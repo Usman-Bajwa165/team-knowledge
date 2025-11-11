@@ -1,6 +1,5 @@
 // frontend/src/pages/forgot-password.tsx
 import React, { useState } from "react";
-import NavBar from "../components/NavBar";
 import { apiFetch } from "../lib/api";
 import Link from "next/link";
 
@@ -38,7 +37,6 @@ export default function ForgotPasswordPage() {
 
   return (
     <>
-      <NavBar />
       <main className="container py-5">
         <div className="row justify-content-center">
           <div className="col-md-6">

@@ -1,7 +1,6 @@
 // frontend/src/pages/dashboard/articles/[id].tsx
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import NavBar from "../../../components/NavBar";
 import { apiFetch } from "../../../lib/api";
 import { useAuth } from "../../../lib/auth";
 import CommentSection from "../../../components/CommentSection";
@@ -101,7 +100,6 @@ export default function ArticlePage() {
   if (!article) {
     return (
       <>
-        <NavBar />
         <main className="container py-5"><div className="text-muted">Loading…</div></main>
       </>
     );
@@ -109,7 +107,6 @@ export default function ArticlePage() {
 
   return (
     <>
-      <NavBar />
       <main className="container py-5">
         <div className="mb-3">
           <Link href="/dashboard" className="btn btn-outline-secondary btn-sm"><i className="fa fa-arrow-left" /> Back to dashboard</Link>
