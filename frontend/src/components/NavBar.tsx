@@ -15,7 +15,7 @@ export default function NavBar() {
           </div>
           <div className="d-flex flex-column">
             <span style={{ fontWeight: 700 }}>Team Knowledge</span>
-            <small className="text-muted" style={{ fontSize: 11 }}>Articles & comments for teams</small>
+            <small style={{ fontSize: 11 }}>Articles & comments for teams</small>
           </div>
         </Link>
 
