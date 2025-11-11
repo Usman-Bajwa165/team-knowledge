@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int                @id @default(autoincrement())
+  email            String             @unique
+  name             String?
+  password         String
+  createdAt        DateTime           @default(now())
+  emailVerified    Boolean            @default(false)
+  refreshTokenHash String?
+  role             String             @default("user")
+  KnowledgeArticle KnowledgeArticle[]
+  KnowledgeComment KnowledgeComment[]
+  passwordResetTokens PasswordResetToken[]
+}
+
+model KnowledgeArticle {
+  id       Int                @id @default(autoincrement())
+  title    String
+  content  String
+  authorId Int
+  createdAt DateTime           @default(now())
+  updatedAt DateTime @updatedAt
+  author   User               @relation(fields: [authorId], references: [id])
+  comments KnowledgeComment[]
+}
+
+model KnowledgeComment {
+  id        Int              @id @default(autoincrement())
+  content   String
+  articleId Int
+  authorId  Int
+  createdAt DateTime          @default(now())
+  updatedAt DateTime @updatedAt
+  article   KnowledgeArticle  @relation(fields: [articleId], references: [id])
+  author    User              @relation(fields: [authorId], references: [id])
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  tokenHash String   // store hashed token
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  used      Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([tokenHash])
+  @@index([userId])
+}

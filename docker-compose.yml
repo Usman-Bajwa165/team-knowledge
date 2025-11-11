@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pass}
+      POSTGRES_DB: ${POSTGRES_DB:-teamkb_dev}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  # Comment out OpenSearch if Docker Desktop has low memory or you're debugging.
+  # Enable later once Docker is stable / memory increased.
+  # opensearch:
+  #   image: opensearchproject/opensearch:2.8.0
+  #   environment:
+  #     - discovery.type=single-node
+  #     - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #   ports:
+  #     - "9200:9200"
+  #     - "9600:9600"
+  #   restart: unless-stopped
+
+volumes:
+  pgdata:

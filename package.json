@@ -1,0 +1,23 @@
+{
+  "name": "team-knowledge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:backend": "npm --workspace backend run dev",
+    "dev:frontend": "npm --workspace frontend run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
+  },
+  "devDependencies": {
+    "@types/next": "^8.0.7",
+    "@types/react": "^19.2.2",
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "next": "^16.0.1"
+  }
+}
