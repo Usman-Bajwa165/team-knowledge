@@ -55,7 +55,7 @@ export default function LoginPage() {
                 />
                 <i
                   className={`fa ${show ? "fa-eye-slash" : "fa-eye"} position-absolute end-0 top-50 translate-middle-y me-3`}
-                  style={{ cursor: "pointer",marginTop:15 }}
+                  style={{ cursor: "pointer",marginTop:3 }}
                   onClick={() => setShow(!show)}
                 />
               </div>

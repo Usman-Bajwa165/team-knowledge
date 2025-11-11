@@ -1,7 +1,12 @@
 // frontend/src/pages/index.tsx
 import Link from "next/link";
+import { useAuth } from "../lib/auth";
 
 export default function Home() {
+  const { user } = useAuth();
+
+  const redirectPath = user ? "/dashboard" : null;
+
   return (
     <main className="container py-5">
       <div className="row align-items-center">
@@ -18,8 +23,18 @@ export default function Home() {
           </ul>
 
           <div className="mt-4">
-            <Link href="/register" className="btn btn-danger btn-lg me-2">Get started</Link>
-            <Link href="/login" className="btn btn-outline-secondary btn-lg">Sign in</Link>
+            <Link
+              href={redirectPath || "/register"}
+              className="btn btn-danger btn-lg me-2"
+            >
+              Get started
+            </Link>
+            <Link
+              href={redirectPath || "/login"}
+              className="btn btn-outline-secondary btn-lg"
+            >
+              Sign in
+            </Link>
           </div>
         </div>
 
@@ -27,8 +42,12 @@ export default function Home() {
           <div className="card shadow-sm">
             <div className="card-body p-4">
               <h5 className="card-title">Latest articles</h5>
-              <p className="text-muted">Visit the dashboard to browse articles and start contributing.</p>
-              <Link href="/dashboard" className="btn btn-outline-danger">Go to dashboard</Link>
+              <p className="text-muted">
+                Visit the dashboard to browse articles and start contributing.
+              </p>
+              <Link href="/dashboard" className="btn btn-outline-danger">
+                Go to dashboard
+              </Link>
             </div>
           </div>
         </div>
@@ -38,7 +57,10 @@ export default function Home() {
 
       <section>
         <h3>About the app</h3>
-        <p className="text-muted">Team Knowledge lets teams create, share, and comment on long-form articles. Built for collaboration, discoverability and longevity.</p>
+        <p className="text-muted">
+          Team Knowledge lets teams create, share, and comment on long-form
+          articles. Built for collaboration, discoverability and longevity.
+        </p>
       </section>
     </main>
   );

@@ -39,11 +39,12 @@ export default function ArticlePage() {
     load();
     // if ?edit=1 present, toggle editing after load
     if (editQ === "1") setEditing(true);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, editQ]);
 
   // compute ownership or admin
-  const isOwner = user && (user.id === article?.author?.id || user.role === "admin");
+  const isOwner =
+    user && (user.id === article?.author?.id || user.role === "admin");
 
   async function toggleEdit(on?: boolean) {
     if (on === undefined) on = !editing;
@@ -81,7 +82,9 @@ export default function ArticlePage() {
         setArticle(updated);
         setEditing(false);
         // remove edit query
-        router.replace(`/dashboard/articles/${article.id}`, undefined, { shallow: true });
+        router.replace(`/dashboard/articles/${article.id}`, undefined, {
+          shallow: true,
+        });
       }
     } catch (err) {
       alert("Network error — try again.");
@@ -92,7 +95,9 @@ export default function ArticlePage() {
 
   async function removeArticle() {
     if (!confirm("Delete this article?")) return;
-    const r = await apiFetch(`/knowledge/articles/${article.id}`, { method: "DELETE" });
+    const r = await apiFetch(`/knowledge/articles/${article.id}`, {
+      method: "DELETE",
+    });
     if (r.ok) router.push("/dashboard");
     else alert("Delete failed");
   }
@@ -100,7 +105,9 @@ export default function ArticlePage() {
   if (!article) {
     return (
       <>
-        <main className="container py-5"><div className="text-muted">Loading…</div></main>
+        <main className="container py-5">
+          <div className="text-muted">Loading…</div>
+        </main>
       </>
     );
   }
@@ -108,8 +115,10 @@ export default function ArticlePage() {
   return (
     <>
       <main className="container py-5">
-        <div className="mb-3">
-          <Link href="/dashboard" className="btn btn-outline-secondary btn-sm"><i className="fa fa-arrow-left" /> Back to dashboard</Link>
+        <div className="mb-3" style={{marginTop:-30}}>
+          <Link href="/dashboard" className="btn btn-outline-secondary btn-sm">
+            <i className="fa fa-arrow-left" /> Back to dashboard
+          </Link>
         </div>
 
         <div className="card shadow-sm p-4 mb-3">
@@ -117,28 +126,66 @@ export default function ArticlePage() {
             <div style={{ flex: 1 }}>
               {editing ? (
                 <form onSubmit={saveChanges}>
-                  <input className="form-control form-control-lg mb-3" value={title} onChange={(e) => setTitle(e.target.value)} />
-                  <textarea rows={10} className="form-control mb-3" value={content} onChange={(e) => setContent(e.target.value)} />
+                  <input
+                    className="form-control form-control-lg mb-3"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+                  <textarea
+                    rows={10}
+                    className="form-control mb-3"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                  />
                   <div className="d-flex justify-content-end gap-2">
-                    <button type="button" className="btn btn-outline-secondary" onClick={() => toggleEdit(false)} disabled={saving}>Cancel</button>
-                    <button className="btn btn-danger" disabled={saving}>{saving ? "Saving…" : "Save changes"}</button>
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={() => toggleEdit(false)}
+                      disabled={saving}
+                    >
+                      Cancel
+                    </button>
+                    <button className="btn btn-danger" disabled={saving}>
+                      {saving ? "Saving…" : "Save changes"}
+                    </button>
                   </div>
                 </form>
               ) : (
                 <>
                   <h1 className="mb-1">{article.title}</h1>
-                  <div className="small text-muted">By <strong>{article.author?.name ?? article.author?.email}</strong> · {formatDate(article.createdAt)} {formatTime(article.createdAt)}</div>
+                  <div className="small text-muted">
+                    By{" "}
+                    <strong>
+                      {article.author?.name ?? article.author?.email}
+                    </strong>{" "}
+                    · {formatDate(article.createdAt)}{" "}
+                    {formatTime(article.createdAt)}
+                  </div>
                 </>
               )}
             </div>
 
             {!editing && (
               <div className="d-flex gap-2 ms-3">
-                <button className="btn btn-outline-danger" onClick={() => setShowComments(s => !s)}><i className="fa fa-comments" /> {showComments ? "Hide" : "Comments"}</button>
+                <button
+                  className="btn btn-outline-danger"
+                  onClick={() => setShowComments((s) => !s)}
+                >
+                  <i className="fa fa-comments" />{" "}
+                  {showComments ? "Hide" : "Comments"}
+                </button>
                 {isOwner && (
                   <>
-                    <button className="btn btn-outline-secondary" onClick={() => toggleEdit(true)}>Edit</button>
-                    <button className="btn btn-danger" onClick={removeArticle}>Delete</button>
+                    <button
+                      className="btn btn-outline-secondary"
+                      onClick={() => toggleEdit(true)}
+                    >
+                      Edit
+                    </button>
+                    <button className="btn btn-danger" onClick={removeArticle}>
+                      Delete
+                    </button>
                   </>
                 )}
               </div>
@@ -153,7 +200,21 @@ export default function ArticlePage() {
           )}
         </div>
 
-        {showComments && <CommentSection articleId={article.id} onClose={() => setShowComments(false)} />}
+        {showComments && (
+          <div
+            style={{
+              maxHeight: "60vh", // adjust if needed
+              overflowY: "auto",
+              paddingRight: "4px", // prevents scrollbar overlapping
+            }}
+          >
+            <CommentSection
+              articleId={article.id}
+              articleAuthorId={article.author?.id}
+              onClose={() => setShowComments(false)}
+            />
+          </div>
+        )}
       </main>
     </>
   );
