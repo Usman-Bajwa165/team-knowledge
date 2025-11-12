@@ -80,17 +80,29 @@ export class KnowledgeService {
 
   // deleteArticle
   async deleteArticle(user: { id: number; role?: string }, id: number) {
+    // ensure article exists
     const article = await this.prisma.knowledgeArticle.findUnique({
       where: { id },
     });
     if (!article) throw new NotFoundException('Article not found');
 
-    const isOwner = article.authorId === user.id;
-    const isAdmin = user.role === 'admin';
-    if (!isOwner && !isAdmin) throw new ForbiddenException('Not allowed');
+    // only author or admin can delete
+    if (article.authorId !== user.id && user.role !== 'admin')
+      throw new ForbiddenException('Not allowed');
 
-    await this.prisma.knowledgeArticle.delete({ where: { id } });
-    return { ok: true };
+    try {
+      // delete comments for this article then delete the article (atomic)
+      await this.prisma.$transaction([
+        this.prisma.knowledgeComment.deleteMany({ where: { articleId: id } }),
+        this.prisma.knowledgeArticle.delete({ where: { id } }),
+      ]);
+
+      return { ok: true };
+    } catch (err) {
+      // log for debugging, then throw a generic not-too-verbose error
+      console.error('Failed to delete article cascade:', err);
+      throw new ForbiddenException('Failed to delete article.');
+    }
   }
 
   // createComment (no change needed except signature might take user object)

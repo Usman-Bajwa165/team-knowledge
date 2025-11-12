@@ -89,15 +89,54 @@ export class AdminController {
     }; // return password so admin can send to user
   }
 
-  // delete user and optionally cascade remove articles/comments
+  // delete user and cascade remove password reset tokens, comments (by user and on user's articles), articles, then user
   @Delete('users/:id')
   async deleteUser(@Param('id') id: string) {
     const userId = Number(id);
-    await this.prisma.$transaction([
-      this.prisma.knowledgeComment.deleteMany({ where: { authorId: userId } }),
-      this.prisma.knowledgeArticle.deleteMany({ where: { authorId: userId } }),
-      this.prisma.user.delete({ where: { id: userId } }),
-    ]);
-    return { ok: true };
+    if (Number.isNaN(userId)) throw new BadRequestException('Invalid user id');
+
+    const existing = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!existing) throw new BadRequestException('User not found');
+
+    try {
+      // find all article ids authored by this user
+      const articles = await this.prisma.knowledgeArticle.findMany({
+        where: { authorId: userId },
+        select: { id: true },
+      });
+      const articleIds = articles.map((a) => a.id);
+
+      await this.prisma.$transaction([
+        // remove any password reset tokens for this user
+        this.prisma.passwordResetToken.deleteMany({ where: { userId } }),
+
+        // remove comments authored by this user OR comments on articles authored by this user
+        this.prisma.knowledgeComment.deleteMany({
+          where: {
+            OR: [
+              { authorId: userId },
+              ...(articleIds.length ? [{ articleId: { in: articleIds } }] : []),
+            ],
+          },
+        }),
+
+        // remove articles authored by this user (comments already removed above)
+        this.prisma.knowledgeArticle.deleteMany({
+          where: { authorId: userId },
+        }),
+
+        // finally remove the user record
+        this.prisma.user.delete({ where: { id: userId } }),
+      ]);
+
+      return { ok: true };
+    } catch (err) {
+      console.error('Failed to delete user cascade:', err);
+      throw new BadRequestException(
+        'Failed to delete user. See server logs for details.',
+      );
+    }
   }
 }

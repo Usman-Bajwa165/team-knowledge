@@ -15,12 +15,20 @@ export default function LoginPage() {
     e.preventDefault();
     setNote(null);
     setLoading(true);
-    const r = await login(email, password);
-    setLoading(false);
-    if (!r.ok) setNote(r.message || "Login failed");
-    else Router.push("/dashboard");
-    if (!r.ok) setNote("Invalid credentials");
-    else Router.push("/dashboard");
+
+    try {
+      const r = await login(email.trim(), password);
+      // only redirect when login explicitly returned ok: true
+      if (r && r.ok) {
+        Router.push("/dashboard");
+        return;
+      }
+      setNote(r?.message ?? "Invalid credentials");
+    } catch (err: any) {
+      setNote(err?.message ?? "Login failed");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -35,7 +43,7 @@ export default function LoginPage() {
               Sign in to your account and continue contributing.
             </p>
 
-            <form onSubmit={onSubmit} className="mt-3">
+            <form onSubmit={onSubmit} className="mt-3" noValidate>
               <div className="mb-3">
                 <label className="form-label small">Email</label>
                 <input
@@ -43,6 +51,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   type="email"
+                  required
                 />
               </div>
               <div className="mb-3 position-relative">
@@ -52,16 +61,17 @@ export default function LoginPage() {
                   type={show ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
                 <i
                   className={`fa ${show ? "fa-eye-slash" : "fa-eye"} position-absolute end-0 top-50 translate-middle-y me-3`}
-                  style={{ cursor: "pointer",marginTop:3 }}
+                  style={{ cursor: "pointer", marginTop: 3 }}
                   onClick={() => setShow(!show)}
                 />
               </div>
 
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <button className="btn btn-danger" disabled={loading}>
+                <button type="submit" className="btn btn-danger" disabled={loading}>
                   {loading ? "Signing in…" : "Sign in"}
                 </button>
                 <a href="/forgot-password" className="small">
